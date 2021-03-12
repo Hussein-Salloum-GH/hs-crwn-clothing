@@ -2,30 +2,39 @@ import React, { Component } from "react";
 import CustomButton from "../custom-button/custom-button.component";
 import FormInput from "../form-input/form-input.component";
 import "./sign-in.styles.scss";
-
-import { signInWithGoogle } from "../../firebase/firebase.utils";
+import { withRouter } from "react-router-dom";
+import { signInWithGoogle, auth } from "../../firebase/firebase.utils";
 class SignIn extends Component {
-  //   constructor(props) {
-  //     super(props);
+  constructor(props) {
+    super(props);
 
-  //     this.state = {
-  //       email: "",
-  //       password: "",
-  //     };
-  //   }
-
-  state = {
-    email: "",
-    password: "",
-  };
-
-  handleSubmit = (event) => {
-    event.preventDefault();
-
-    this.setState({
+    this.state = {
       email: "",
       password: "",
-    });
+    };
+  }
+
+  // state = {
+  //   email: "",
+  //   password: "",
+  // };
+
+  handleSubmit = async (event) => {
+    event.preventDefault();
+
+    const { email, password } = this.state;
+    const { history } = this.props;
+    console.log(history);
+    try {
+      await auth.signInWithEmailAndPassword(email, password);
+      this.setState({
+        email: "",
+        password: "",
+      });
+      history.goBack();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   handleChange = (event) => {
@@ -96,4 +105,4 @@ class SignIn extends Component {
   }
 }
 
-export default SignIn;
+export default withRouter(SignIn);
